@@ -8,13 +8,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/cloudfront/sign v1.3.49 // direct
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.81 // direct
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.38.5 // direct
+	github.com/coreos/go-oidc/v3 v3.6.0 // direct
 	github.com/gofiber/fiber/v2 v2.48.0 // direct
 	github.com/jackc/pgx/v5 v5.4.3 // direct
 	github.com/jmoiron/sqlx v1.3.5 // direct
 	github.com/joho/godotenv v1.5.1 // direct
 	github.com/redis/go-redis/v9 v9.1.0 // direct
 	golang.org/x/oauth2 v0.11.0 // direct
-	github.com/coreos/go-oidc/v3 v3.6.0 // direct
 )
 
 require (
@@ -36,6 +36,7 @@ require (
 	github.com/aws/smithy-go v1.14.2 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
