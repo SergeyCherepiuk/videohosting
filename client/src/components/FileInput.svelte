@@ -1,24 +1,29 @@
 <script lang="ts">
     let files: FileList
+    let onSubmitPromise: Promise<Response>
 
-    function onSubmit() {
-        let fileReader = new FileReader()
-        fileReader.readAsArrayBuffer(files.item(0) as Blob)
-        fileReader.onload = async () => {
-            let file = fileReader.result
-
-            // TODO: Split into chunks
-            await fetch("http://localhost:3000/upload", {
-                "method": "POST",
-                "headers": {
-                    "content-type": "application/octet-stream",
-                    "content-length": (file as ArrayBuffer).byteLength.toString(),
-                },
-                "body": file
-            })
-        }
+    async function onSubmit() {
+        const formData = new FormData()
+        formData.append("file", files.item(0) as Blob)
+        return await fetch("http://localhost:3000/upload", {
+            "method": "POST",
+            "body": formData 
+        })
     }
 </script>
 
 <input type="file" bind:files />
-<button on:click={onSubmit}>Submit</button>
+<button on:click={() => onSubmitPromise = onSubmit()}>Submit</button>
+{#if onSubmitPromise}
+    {#await onSubmitPromise}
+        <p>Sending file...</p> 
+    {:then response} 
+        {#if response.ok}
+            <p>File has been sent successfully!</p>
+        {:else}
+            <p>The error ocurred.</p>
+        {/if}
+    {:catch}
+        <p>File is too large!</p>
+    {/await}
+{/if}
