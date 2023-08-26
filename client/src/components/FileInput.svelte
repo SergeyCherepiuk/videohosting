@@ -23,5 +23,5 @@
     }
 </script>
 
-<input type="file" bind:files />
+<input type="file" name="file" bind:files />
 <button on:click={uploadFile}>Submit</button>

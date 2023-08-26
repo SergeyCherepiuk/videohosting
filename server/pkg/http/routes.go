@@ -2,6 +2,8 @@ package http
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -21,12 +23,31 @@ func NewRouter() *echo.Echo {
 		c.Response().Header().Set("Cache-Control", "no-cache")
 		c.Response().Header().Set("Connection", "keep-alive")
 
-		event := "test"
+		fileHeader, err := c.FormFile("file")
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
+
+		file, err := fileHeader.Open()
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
+
+		content, err := io.ReadAll(file)
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
+
+		log.Printf("file length: %d", len(content))
+
 		for i := 0; i < 5; i++ {
 			fmt.Fprintf(
 				c.Response().Writer,
 				"id: %d\nevent: %s\ndata: %v",
-				i, event, i,
+				i, "test", i,
 			)
 			c.Response().Flush()
 			time.Sleep(time.Second)
