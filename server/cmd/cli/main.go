@@ -14,6 +14,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	app := http.NewRouter()
-	app.Listen(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
+	e := http.NewRouter()
+	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }

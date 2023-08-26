@@ -1,29 +1,27 @@
 <script lang="ts">
     let files: FileList
-    let onSubmitPromise: Promise<Response>
-
-    async function onSubmit() {
-        const formData = new FormData()
+    
+    async function uploadFile() {
+        let formData = new FormData()
         formData.append("file", files.item(0) as Blob)
-        return await fetch("http://localhost:3000/upload", {
-            "method": "POST",
-            "body": formData 
+        let response = await fetch("http://localhost:3000/upload", {
+            method: "POST",
+            headers: {
+                "Accept": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+            },
+            body: formData,
         })
+
+        let reader = response.body?.getReader()
+        while (true) {
+            let bytes = await reader?.read();
+            if (bytes?.done) break;
+            console.log(bytes?.value.toString() ?? "");
+        }
     }
 </script>
 
 <input type="file" bind:files />
-<button on:click={() => onSubmitPromise = onSubmit()}>Submit</button>
-{#if onSubmitPromise}
-    {#await onSubmitPromise}
-        <p>Sending file...</p> 
-    {:then response} 
-        {#if response.ok}
-            <p>File has been sent successfully!</p>
-        {:else}
-            <p>The error ocurred.</p>
-        {/if}
-    {:catch}
-        <p>File is too large!</p>
-    {/await}
-{/if}
+<button on:click={uploadFile}>Submit</button>

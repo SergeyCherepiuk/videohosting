@@ -1,21 +1,39 @@
 package http
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter() *fiber.App {
-	app := fiber.New(fiber.Config{
-		BodyLimit: 1024 * 1024 * 1024, // 1 GB
-	})
-	app.Use(cors.New())
-	app.Use(logger.New())
+func NewRouter() *echo.Echo {
+	e := echo.New()
+	e.Use(middleware.BodyLimit("1G"))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowHeaders: []string{echo.HeaderCacheControl},
+	}))
 
-	app.Post("/upload", func(c *fiber.Ctx) error {
-		return c.SendStatus(fiber.StatusOK)
+	e.POST("/upload", func(c echo.Context) error {
+		c.Response().Header().Set("Content-Type", "text/event-stream")
+		c.Response().Header().Set("Cache-Control", "no-cache")
+		c.Response().Header().Set("Connection", "keep-alive")
+
+		event := "test"
+		for i := 0; i < 5; i++ {
+			fmt.Fprintf(
+				c.Response().Writer,
+				"id: %d\nevent: %s\ndata: %v",
+				i, event, i,
+			)
+			c.Response().Flush()
+			time.Sleep(time.Second)
+		}
+
+		return c.NoContent(http.StatusOK)
 	})
 
-	return app
+	return e
 }
