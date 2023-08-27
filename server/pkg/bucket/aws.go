@@ -1,8 +1,8 @@
 package bucket
 
 import (
-	"bytes"
 	"context"
+	"io"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
@@ -18,14 +18,14 @@ func NewS3BucketService(client *s3.Client, bucket string) *S3BucketService {
 	return &S3BucketService{client: client, bucketName: bucket}
 }
 
-func (service S3BucketService) Upload(ctx context.Context, key string, file []byte) error {
+func (service S3BucketService) Upload(ctx context.Context, key string, file io.Reader) error {
 	manager := manager.NewUploader(service.client, func(u *manager.Uploader) {
 		u.PartSize = 10 * 1024 * 1024
 	})
 	_, err := manager.Upload(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(service.bucketName),
 		Key:    aws.String(key),
-		Body:   bytes.NewBuffer(file),
+		Body:   file,
 	})
 
 	return err

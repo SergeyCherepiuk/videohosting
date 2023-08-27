@@ -2,9 +2,10 @@ package bucket
 
 import (
 	"context"
+	"io"
 )
 
 type BucketService interface {
-	Upload(ctx context.Context, key string, file []byte) error
+	Upload(ctx context.Context, key string, file io.Reader) error
 	Get(ctx context.Context, ket string) ([]byte, error)
 }

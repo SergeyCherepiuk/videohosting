@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
-	"io"
+	"fmt"
 	"net/http"
 
 	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
+	"github.com/SergeyCherepiuk/videohosting/pkg/internal/reader"
+	"github.com/SergeyCherepiuk/videohosting/pkg/internal/sse"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,12 +34,20 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 		return err
 	}
 
-	content, err := io.ReadAll(file)
-	if err != nil {
-		return err
-	}
+	eventId := 0
+	reader := reader.NewReaderWithProgress(file, func(bytesRead int) {
+		event := sse.Event{
+			ID:        eventId,
+			EventName: "progress",
+			Data:      fmt.Sprintf("%.2f", float32(bytesRead)/float32(fileHeader.Size)),
+		}	
+		if err := event.Send(c.Response()); err != nil {
+			c.Logger().Errorf("failed to send a SSE: %w", err)
+		}
+		eventId++
+	})
 
-	if err := handler.bucket.Upload(context.Background(), fileHeader.Filename, content); err != nil {
+	if err := handler.bucket.Upload(context.Background(), fileHeader.Filename, reader); err != nil {
 		return err
 	}
 
