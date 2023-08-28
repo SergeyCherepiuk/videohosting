@@ -39,7 +39,10 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 		event := sse.Event{
 			ID:        eventId,
 			EventName: "progress",
-			Data:      fmt.Sprintf("%.2f", float32(bytesRead)/float32(fileHeader.Size)),
+			Data: fmt.Sprintf(
+				`{ "progress": %.2f }`,
+				float32(bytesRead)/float32(fileHeader.Size),
+			),
 		}
 		if err := event.Send(c.Response()); err != nil {
 			c.Logger().Errorf("failed to send a SSE: %w", err)

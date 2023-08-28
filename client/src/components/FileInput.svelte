@@ -1,11 +1,13 @@
 <script lang="ts">
+    import { parseEvent, type ServerSentEvent } from "../sse/sse";
+
     let files: FileList
     let progress: string = ""
     
     async function uploadFile() {
         let formData = new FormData()
         formData.append("file", files.item(0) as Blob)
-        let response = await fetch("http://localhost:3000/upload", {
+        fetch("http://localhost:3000/upload", {
             method: "POST",
             headers: {
                 "Accept": "text/event-stream",
@@ -13,24 +15,21 @@
                 "Connection": "keep-alive",
             },
             body: formData,
+        }).then(async (response) => {
+            if (response.ok && response.body) {
+                let reader = response.body.getReader()
+                let decoder = new TextDecoder("utf-8");
+
+                while (true) {
+                    let { done, value } = await reader.read()
+                    if (done) return
+                    
+                    let event: ServerSentEvent = parseEvent(decoder.decode(value))
+                    let data: { progress: number } = JSON.parse(event.data)
+                    progress = `${data.progress * 100}%`
+                }   
+            } 
         })
-
-        try {
-            const reader = response.body?.getReader()
-            if (!reader) return
-
-            while (true) {
-                const { done, value } = await reader.read()
-                if (done) break
-
-                if (value) {
-                    console.log(value)
-                    progress = new TextDecoder().decode(value); 
-                }
-            }
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
     }
 </script>
 
