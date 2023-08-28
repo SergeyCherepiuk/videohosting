@@ -33,10 +33,11 @@ func (service S3BucketService) Upload(ctx context.Context, key string, file io.R
 }
 
 func (service S3BucketService) Get(ctx context.Context, key string) ([]byte, error) {
+	partSize := int64(10 * 1024 * 1024)
 	downloader := manager.NewDownloader(service.client, func(d *manager.Downloader) {
-		d.PartSize = 10 * 1024 * 1024
+		d.PartSize = partSize
 	})
-	buffer := manager.NewWriteAtBuffer([]byte{})
+	buffer := manager.NewWriteAtBuffer(make([]byte, partSize))
 
 	_, err := downloader.Download(ctx, buffer, &s3.GetObjectInput{
 		Bucket: aws.String(service.bucketName),
