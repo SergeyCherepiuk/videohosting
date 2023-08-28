@@ -1,8 +1,6 @@
 package http
 
 import (
-	"os"
-
 	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
 	"github.com/SergeyCherepiuk/videohosting/pkg/http/handlers"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -23,11 +21,12 @@ func (router Router) Build() *echo.Echo {
 	}))
 
 	// Services
-	s3BucketService := bucket.NewS3BucketService(router.S3Client, os.Getenv("S3_BUCKET_NAME"))
+	// s3BucketService := bucket.NewS3BucketService(router.S3Client, os.Getenv("S3_BUCKET_NAME"))
+	mockBucketService := bucket.NewMockBucketService()
 
 	// Handlers
-	videoHandler := handlers.NewVideoHandler(s3BucketService)
-	
+	videoHandler := handlers.NewVideoHandler(mockBucketService)
+
 	// Routes
 	e.POST("/upload", videoHandler.Upload)
 

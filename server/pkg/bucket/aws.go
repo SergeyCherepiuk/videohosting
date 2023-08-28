@@ -22,6 +22,7 @@ func (service S3BucketService) Upload(ctx context.Context, key string, file io.R
 	manager := manager.NewUploader(service.client, func(u *manager.Uploader) {
 		u.PartSize = 10 * 1024 * 1024
 	})
+
 	_, err := manager.Upload(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(service.bucketName),
 		Key:    aws.String(key),
