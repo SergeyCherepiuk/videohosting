@@ -1,10 +1,22 @@
 <script lang="ts">
     import { parseEvent, type ServerSentEvent } from "../sse/sse";
 
+    let input: HTMLInputElement
     let files: FileList
     let progress: string = ""
-    
+
+    function validateFileFormat() {
+        if (!files.item(0)?.type?.startsWith("video/")) {
+            input.value = ""
+            alert("Only video file are allowed")
+        }
+    }
+
     async function uploadFile() {
+        if (files.length <= 0) {
+            return
+        }
+
         let formData = new FormData()
         formData.append("file", files.item(0) as Blob)
         fetch("http://localhost:3000/upload", {
@@ -33,6 +45,12 @@
     }
 </script>
 
-<input type="file" name="file" bind:files />
+<input
+    type="file"
+    name="file"
+    accept="video/*"
+    bind:files
+    bind:this={input}
+    on:change={validateFileFormat} />
 <button on:click={uploadFile}>Submit</button>
 <p>{progress}</p>
