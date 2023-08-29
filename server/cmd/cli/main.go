@@ -1,14 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
 	"github.com/SergeyCherepiuk/videohosting/pkg/http"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/joho/godotenv"
 )
 
@@ -18,14 +16,18 @@ func main() {
 	}
 
 	// Amazon S3
-	config, err := config.LoadDefaultConfig(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-	client := s3.NewFromConfig(config)
+	// config, err := config.LoadDefaultConfig(context.Background())
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// client := s3.NewFromConfig(config)
+	// s3BucketService := bucket.NewS3BucketService(client, os.Getenv("S3_BUCKET_NAME"))
+
+	// Mocks
+	mockBucketService := bucket.NewMockBucketService()
 
 	e := http.Router{
-		S3Client: client,
+		Bucket: mockBucketService,
 	}.Build()
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }
