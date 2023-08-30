@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
 	"github.com/SergeyCherepiuk/videohosting/pkg/internal/reader"
@@ -26,12 +27,18 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	fileType := fileHeader.Header.Get("Content-Type")
+	startsWithVideo := regexp.MustCompile("^video/*")
+	if !startsWithVideo.Match([]byte(fileType)) {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid file type: %s", fileType))
 	}
 
 	file, err := fileHeader.Open()
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	eventId := 0
@@ -51,7 +58,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 	})
 
 	if err := handler.bucket.Upload(context.Background(), fileHeader.Filename, reader); err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	return c.NoContent(http.StatusOK)
