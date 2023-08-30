@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"regexp"
+	"strings"
 
 	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
 	"github.com/SergeyCherepiuk/videohosting/pkg/internal/reader"
@@ -31,8 +31,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 	}
 
 	fileType := fileHeader.Header.Get("Content-Type")
-	startsWithVideo := regexp.MustCompile("^video/*")
-	if !startsWithVideo.Match([]byte(fileType)) {
+	if !strings.HasPrefix(fileType, "video/") {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid file type: %s", fileType))
 	}
 
