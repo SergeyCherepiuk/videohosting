@@ -5,7 +5,7 @@ create table users (
     password varchar(256) not null,
     family_name varchar(40) not null,
     given_name varchar(40) not null,
-    profile_picture_id id unique,
+    profile_picture_id uuid unique,
     created_at timestamp not null default current_timestamp
 );
 
