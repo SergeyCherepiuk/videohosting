@@ -6,14 +6,18 @@ import (
 	"os"
 
 	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
+	"github.com/SergeyCherepiuk/videohosting/pkg/database/postgres"
 	"github.com/SergeyCherepiuk/videohosting/pkg/http"
 	"github.com/joho/godotenv"
 )
 
+func init() {
+	loadEnv()
+	postgres.MustConnect()
+}
+
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
+	videoService := postgres.NewVideoService()
 
 	// Amazon S3
 	// config, err := config.LoadDefaultConfig(context.Background())
@@ -27,7 +31,14 @@ func main() {
 	mockBucketService := bucket.NewMockBucketService()
 
 	e := http.Router{
-		Bucket: mockBucketService,
+		VideoService: videoService,
+		Bucket:       mockBucketService,
 	}.Build()
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
+}
+
+func loadEnv() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
 }

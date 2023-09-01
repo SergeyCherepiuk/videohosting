@@ -17,5 +17,5 @@ type Video struct {
 }
 
 type VideoService interface {
-	Upload(video *Video) error
+	Upload(video Video) error
 }
