@@ -1,5 +1,7 @@
 <script lang="ts">
-    import FileInput from "../components/FileInput.svelte";
+    import TextField from "../components/upload/TextField.svelte";
+
+    let title: string;
 </script>
 
-<FileInput />
+<TextField name="title" bind:text={title} limit={100} />

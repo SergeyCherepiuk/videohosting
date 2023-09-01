@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { parseEvent, type ServerSentEvent } from "../sse/sse";
+    import { parseEvent, type ServerSentEvent } from "../../sse/sse";
 
     let input: HTMLInputElement
     let files: FileList
