@@ -21,7 +21,7 @@ create table videos (
     title varchar(100) not null,
     description varchar(5000) not null,
     preview_id uuid unique,
-    number_of_views bigint not null default 0,
+    views_count bigint not null default 0,
     created_at timestamp not null default current_timestamp
 );
 

@@ -47,7 +47,7 @@
 
 <input
     type="file"
-    name="file"
+    name="video"
     accept="video/*"
     bind:files
     bind:this={input}
