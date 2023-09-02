@@ -2,7 +2,6 @@
     import { onMount } from 'svelte';
 
     export let name: string;
-    export let label: string | null = null;
     export let text: string;
     export let limit: number = 0;
     export let singleLine: boolean = true;
@@ -20,36 +19,28 @@
             text = input.value;
 
             input.style.height = "0px";
-            input.style.height = (input.scrollHeight) - 32 + "px";
+            input.style.height = (input.scrollHeight) - 24.5 + "px";
         };
     });
 </script>
 
-<div class="textfield">
-    {#if label}
-        <span class="label">{label}</span>
-    {/if}
-    <div class="input-box">
-        <div id="scroll" class="scroll">
-            <textarea id="input" {name} rows="1" bind:value={text}/> 
-        </div>
-        {#if limit > 0}
-            <span>{text?.length ?? 0}/{limit}</span>
-            {#if (text?.length ?? 0) > limit}
-                <!-- Change styles -->
-            {/if}
-        {/if}
+<div class="input-box">
+    <div id="scroll" class="scroll">
+        <textarea id="input" {name} rows="1" bind:value={text}/> 
     </div>
+    {#if limit > 0}
+        <span>{text?.length ?? 0}/{limit}</span>
+        {#if (text?.length ?? 0) > limit}
+            <!-- Change styles -->
+        {/if}
+    {/if}
 </div>
 
 <style lang="scss">
-    $font-size: 18px;
-    $line-height: 150%;
+    $line-height: 175%;
     $border-radius: 10px;
     $border-width: 3px;
     $outline-width: 3px;
-    $padding: 16px;
-    $scroll-bar-width: 12px;
 
     $gray-30: #555555;
     $gray-60: #AAAAAA;
@@ -58,20 +49,9 @@
     $blue-50: #1952E5;
     $blue-90: #E2ECFB;
 
-    .textfield {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .textfield * {
-        font-size: $font-size;
+    * {
         font-family: "Amazon Ember";
-    }
-
-    .label {
-        padding-left: $padding;
-        color: black; 
+        font-size: 18px;
     }
 
     .input-box {
@@ -92,7 +72,7 @@
     }
     
     .input-box textarea, .input-box span { 
-        padding: $padding;
+        padding: 12px;
     }
 
     .scroll {
@@ -116,7 +96,7 @@
     }
 
     ::-webkit-scrollbar {
-        width: $scroll-bar-width;
+        width: 12px;
     }
 
     ::-webkit-scrollbar-track {
