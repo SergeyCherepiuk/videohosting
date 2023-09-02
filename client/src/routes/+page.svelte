@@ -4,4 +4,4 @@
     let title: string;
 </script>
 
-<TextField name="title" bind:text={title} limit={100} />
+<TextField name="title" label="Title" bind:text={title} limit={100} singleLine={false} />
