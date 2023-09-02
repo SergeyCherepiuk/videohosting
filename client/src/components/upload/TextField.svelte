@@ -1,13 +1,28 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
+
     export let name: string;
     export let text: string;
     export let limit: number = 0;
+    
+    onMount(() => {
+        let input: HTMLTextAreaElement = document.getElementById("input") as HTMLTextAreaElement;
+        input.oninput = () => {
+            text = text.replaceAll("\n", "");
+            input.value = text;
+            input.style.height = "0px";
+            input.style.height = (input.scrollHeight) - 30 + "px";
+        };
+    });
 </script>
 
 <div class="input-box">
-    <input type="text" name={name} bind:value={text}/>
+    <textarea id="input" {name} rows="1" bind:value={text}/>
     {#if limit > 0}
         <span>{text?.length ?? 0}/{limit}</span>
+        {#if (text?.length ?? 0) > limit}
+            <!-- Change styles -->
+        {/if}
     {/if}
 </div>
 
@@ -33,7 +48,7 @@
         outline: $outline-width $outline-color solid;
     }
 
-    .input-box:has(input:focus) {
+    .input-box:has(textarea:focus) {
         border: $border-width $focused-border-color solid;
         outline: $outline-width $outline-color solid;
     }
@@ -44,9 +59,10 @@
         padding: $padding;
     }
 
-    input {
+    textarea {
         all: unset;
         flex-grow: 1;
+        overflow-wrap: break-word;
     }
 
     span {
