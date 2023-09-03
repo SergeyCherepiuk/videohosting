@@ -4,7 +4,7 @@
 
 <div class="column">
     <span>{label}</span>
-    <slot></slot>    
+    <slot />
 </div>
 
 <style lang="scss">
