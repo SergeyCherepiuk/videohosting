@@ -1,15 +1,26 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { TFState, TFEvent, useTextFieldMachine } from '../../state/textfield';
 
     export let name: string;
     export let text: string;
-    export let limit: number = 0;
+    export let limit: number | null = null;
     export let singleLine: boolean = true;
     export let maxHeight: string = "300px";
-    
+
+    let { state, send } = useTextFieldMachine(TFState.Unfocused);
+
+    function onFocus() {
+        send(TFEvent.Focus)
+    }
+
+    function onBlur() {
+        send(TFEvent.Unfocus)
+    }
+
     onMount(() => {
-        let scroll: HTMLDivElement = document.getElementById("scroll") as HTMLDivElement
-        scroll.style.maxHeight = maxHeight
+        let scroll: HTMLDivElement = document.getElementById("scroll") as HTMLDivElement;
+        scroll.style.maxHeight = maxHeight;
 
         let input: HTMLTextAreaElement = document.getElementById("input") as HTMLTextAreaElement;
         input.oninput = () => {
@@ -17,6 +28,12 @@
                 input.value = input.value.replaceAll("\n", "");
             }
             text = input.value;
+
+            if (limit && text.length > limit) {
+                send(TFEvent.ExceedLimit);
+            } else if (limit) {
+                send(TFEvent.BackToLimit);
+            }
 
             input.style.height = "0px";
             input.style.height = (input.scrollHeight) - 24.5 + "px";
@@ -26,13 +43,10 @@
 
 <div class="input-box">
     <div id="scroll" class="scroll">
-        <textarea id="input" {name} rows="1" bind:value={text}/> 
+        <textarea id="input" {name} rows="1" on:focus={onFocus} on:blur={onBlur} /> 
     </div>
-    {#if limit > 0}
+    {#if limit}
         <span>{text?.length ?? 0}/{limit}</span>
-        {#if (text?.length ?? 0) > limit}
-            <!-- Change styles -->
-        {/if}
     {/if}
 </div>
 
@@ -48,6 +62,9 @@
 
     $blue-50: #1952E5;
     $blue-90: #E2ECFB;
+
+    $red-50: #E12D2D;
+    $red-90: #FFE9E9;
 
     * {
         font-family: "Amazon Ember";
