@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.direction-ltr {
+    direction: ltr;
+}
+
+.direction-rtl {
+    direction: rtl;
+}
+
 @font-face {
     font-family: "Amazon Ember";
     src: local("../static/fonts")

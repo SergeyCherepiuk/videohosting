@@ -6,23 +6,13 @@
     export let text: string;
     export let limit: number | null = null;
     export let singleLine: boolean = true;
-    export let maxHeight: string = "300px";
 
     let { state, send } = useTextFieldMachine(TFState.Unfocused);
-
-    function onFocus() {
-        send(TFEvent.Focus)
-    }
-
-    function onBlur() {
-        send(TFEvent.Unfocus)
-    }
+    function onFocus() { send(TFEvent.Focus) }
+    function onBlur() { send(TFEvent.Unfocus) }
 
     onMount(() => {
-        let scroll: HTMLDivElement = document.getElementById("scroll") as HTMLDivElement;
-        scroll.style.maxHeight = maxHeight;
-
-        let input: HTMLTextAreaElement = document.getElementById("input") as HTMLTextAreaElement;
+        let input = document.getElementById("input") as HTMLTextAreaElement;
         input.oninput = () => {
             if (singleLine) {
                 input.value = input.value.replaceAll("\n", "");
@@ -36,101 +26,66 @@
             }
 
             input.style.height = "0px";
-            input.style.height = (input.scrollHeight) - 24.5 + "px";
+            input.style.height = (input.scrollHeight) + "px";
         };
     });
+
+    let preloadColors = [
+        "border-gray-70", "border-blue-50", "border-red-50",
+        "outline-transparent", "outline-blue-90", "outline-red-90",
+        "text-red-50", "text-gray-70",
+    ]
 </script>
 
-<div class="input-box">
-    <div id="scroll" class="scroll">
-        <textarea id="input" {name} rows="1" on:focus={onFocus} on:blur={onBlur} /> 
+<div class="
+    flex flex-row items-start
+    rounded-xl border-3 border-{
+        ($state == TFState.Focused) ? "blue-50"
+        : ($state == TFState.Unfocused) ? "gray-70"
+        : "red-50"
+    }
+    outline {
+        ($state == TFState.Error) ? "outline-3 outline-red-90"
+        : ($state == TFState.Focused) ? "outline-3 outline-blue-90"
+        : "outline-transparent hover:outline-3 hover:outline-blue-90"
+    }">
+    
+    <div id="scroll" class="flex flex-1 overflow-auto max-h-80 direction-rtl">
+        <textarea
+            id="input" {name} rows="1"
+            class="
+                resize-none outline-none
+                flex-grow p-3
+                font-amazon-ember text-lg break-words
+                rounded-xl direction-ltr"
+            on:focus={onFocus} on:blur={onBlur} /> 
     </div>
+
     {#if limit}
-        <span>{text?.length ?? 0}/{limit}</span>
+        <span class="font-amazon-ember text-lg p-3 text-{
+            ($state == TFState.Error) ? "red-50" : "gray-70"
+        }">
+            {text?.length ?? 0}/{limit}
+        </span>
     {/if}
 </div>
 
-<style lang="scss">
-    $line-height: 175%;
-    $border-radius: 10px;
-    $border-width: 3px;
-    $outline-width: 3px;
-
-    $gray-30: #555555;
-    $gray-60: #AAAAAA;
-    $gray-70: #CCCCCC;
-
-    $blue-50: #1952E5;
-    $blue-90: #E2ECFB;
-
-    $red-50: #E12D2D;
-    $red-90: #FFE9E9;
-
-    * {
-        font-family: "Amazon Ember";
-        font-size: 18px;
-    }
-
-    .input-box {
-        display: flex;
-        flex-direction: row;
-        align-items: start;
-        border: $border-width $gray-70 solid;
-        border-radius: $border-radius;
-    }
-
-    .input-box:hover {
-        outline: $outline-width $blue-90 solid;
-    }
-
-    .input-box:has(textarea:focus) {
-        border: $border-width $blue-50 solid;
-        outline: $outline-width $blue-90 solid;
-    }
-    
-    .input-box textarea, .input-box span { 
-        padding: 12px;
-    }
-
-    .scroll {
-        flex: 1;
-        display: flex;
-        overflow: auto;
-        direction: rtl;
-    }
-
-    textarea {
-        all: unset;
-        flex-grow: 1;
-        overflow-wrap: break-word;
-        direction: ltr;
-        line-height: $line-height;
-    }
-
-    .input-box span {
-        color: $gray-70;
-        line-height: $line-height;
-    }
-
+<style>
     ::-webkit-scrollbar {
         width: 12px;
     }
 
     ::-webkit-scrollbar-track {
-        background: $gray-70; 
+        background: theme("colors.gray-70"); 
+        border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: $gray-60;
+        background: theme("colors.gray-60");
+        border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: $gray-30; 
-    }
-
-    @font-face {
-        font-family: "Amazon Ember";
-        src: local("../../../static")
-            url("amazon_ember.ttf") format("truetype")
+        background: theme("colors.gray-30"); 
     }
 </style>
