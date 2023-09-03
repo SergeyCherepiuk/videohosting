@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Amazon Ember";
+    src: local("../static/fonts")
+        url("amazon_ember.ttf") format("truetype")
+}
