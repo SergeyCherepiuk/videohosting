@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Label from "./Label.svelte";
-    import Preview from "./Preview.svelte";
-    import TextField from "./TextField.svelte";
+    import Label from "../common/Label.svelte";
+    import Preview from "../common/Preview.svelte";
+    import TextField from "../common/TextField.svelte";
 
     let title: string
     let description: string
@@ -17,7 +17,7 @@
         </div>
         <div class="flex-2">
             <Label label="Preview">
-                <Preview />
+                <Preview src="images/preview_placeholder.svg" alt="Preview placeholder" />
             </Label>
         </div>
     </div>

@@ -1,1 +1,0 @@
-<img src="/images/preview_placeholder.svg" alt="Preview placeholder" class="rounded-xl" />
