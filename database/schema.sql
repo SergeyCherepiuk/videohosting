@@ -11,7 +11,7 @@ create table users (
 
 create table videos (
     id uuid primary key,
-    author_id uuid references users(id) not null on delete cascade on update cascade,
+    author_id uuid references users(id) on delete cascade on update cascade not null,
     title varchar(100) not null,
     description varchar(5000) not null,
     preview_id uuid unique,
