@@ -6,6 +6,6 @@ import (
 )
 
 type BucketService interface {
-	Upload(ctx context.Context, key string, file io.Reader) error
-	Get(ctx context.Context, key string) ([]byte, error)
+	Get(ctx context.Context, key string) ([]byte, string, error)
+	Upload(ctx context.Context, key, contentType string, file io.Reader) error
 }
