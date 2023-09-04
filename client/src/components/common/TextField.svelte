@@ -3,6 +3,7 @@
 
     export let name: string;
     export let text: string;
+    export let placeholder: string = ""
     export let limit: number | null = null;
     export let singleLine: boolean = true;
     export let minHeightPx: number = 0;
@@ -43,24 +44,23 @@
 
 <div class="
     flex flex-row items-start
-    rounded-xl border-3 border-{
+    rounded-xl border-[3px] border-{
         ($state == TFState.Focused) ? "blue-50"
         : ($state == TFState.Unfocused) ? "gray-70"
         : "red-50"
     }
     outline {
-        ($state == TFState.Error) ? "outline-3 outline-red-90"
-        : ($state == TFState.Focused) ? "outline-3 outline-blue-90"
-        : "outline-transparent hover:outline-3 hover:outline-blue-90"
+        ($state == TFState.Error) ? "outline-[3px] outline-red-90"
+        : ($state == TFState.Focused) ? "outline-[3px] outline-blue-90"
+        : "outline-transparent hover:outline-[3px] hover:outline-blue-90"
     }">
     
     <div class="flex flex-1 h-full overflow-auto max-h-80 direction-rtl">
         <textarea
-            {name}
-            rows="1"
+            {name} {placeholder} rows="1"
             class="
                 resize-none outline-none
-                flex-grow p-3 min-h-{minHeightPx}
+                flex-grow p-3 min-h-[{minHeightPx}px]
                 font-amazon-ember text-lg break-words 
                 rounded-xl direction-ltr"
             on:input={e => { sanitize(e); checkLimit(e); autoScale(e) }}

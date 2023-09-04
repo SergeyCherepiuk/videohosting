@@ -7,6 +7,7 @@ export default {
     },
     colors: {
       "transparent": "transparent",
+      "white": "#FFFFFF",
       "gray-30": "#555555",
       "gray-60": "#AAAAAA",
       "gray-70": "#CCCCCC",
@@ -19,18 +20,9 @@ export default {
       container: {
         "reset-all": "initial",
       },
-      borderWidth: {
-        "3": "3px",
-      },
-      outlineWidth: {
-        "3": "3px",
-      },
       flex: {
         "2": "2 2 0%",
         "3": "3 3 0%",
-      },
-      minHeight: {
-        "192": "192px",
       },
     },
   },
