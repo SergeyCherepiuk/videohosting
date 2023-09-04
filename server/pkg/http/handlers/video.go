@@ -31,6 +31,20 @@ func NewVideoHandler(
 	}
 }
 
+func (handler VideoHandler) GetByUUID(c echo.Context) error {
+	uuid, err := uuid.Parse(c.Param("uuid"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	video, err := handler.videoService.GetByUUID(uuid)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, video)
+}
+
 func (handler VideoHandler) Upload(c echo.Context) error {
 	c.Response().Header().Set("Content-Type", "text/event-stream")
 	c.Response().Header().Set("Cache-Control", "no-cache")
@@ -69,7 +83,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 
 	video := domain.Video{
 		ID:          uuid.New(),
-		AuthorID:    uuid.MustParse("93379a37-4135-4675-8b5e-425b39d4a823"), // hardcoded for now (no auth)
+		AuthorID:    uuid.MustParse("657e846b-073b-454a-999b-2ce6157452cc"), // hardcoded for now (no auth)
 		Title:       request.Title,
 		Description: request.Description,
 		PreviewID:   uuid.New(),
@@ -101,13 +115,17 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 
 	// Uploading preview to the bucket
 	previewFilePath := fmt.Sprintf("%s/%s", os.Getenv("S3_PREVIEW_FOLDER"), video.PreviewID.String())
-	if err := handler.bucket.Upload(context.Background(), previewFilePath, previewFile); err != nil {
+	if err := handler.bucket.Upload(
+		context.Background(), previewFilePath, previewFileHeader.Header.Get("Content-Type"), previewFile,
+	); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	// Uploading video to the bucket
 	videoFilePath := fmt.Sprintf("%s/%s", os.Getenv("S3_VIDEO_FOLDER"), video.ID.String())
-	if err := handler.bucket.Upload(context.Background(), videoFilePath, reader); err != nil {
+	if err := handler.bucket.Upload(
+		context.Background(), videoFilePath, videoFileHeader.Header.Get("Content-Type"), reader,
+	); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 

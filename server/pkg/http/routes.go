@@ -23,9 +23,15 @@ func (router Router) Build() *echo.Echo {
 
 	// Handlers
 	videoHandler := handlers.NewVideoHandler(router.VideoService, router.Bucket)
+	previewHandler := handlers.NewPreviewHandler(router.Bucket)
 
 	// Routes
-	e.POST("/upload", videoHandler.Upload)
+	videos := e.Group("videos")
+	videos.GET("/:uuid", videoHandler.GetByUUID)
+	videos.POST("/upload", videoHandler.Upload)
+
+	previews := e.Group("previews")
+	previews.GET("/:uuid", previewHandler.GetByUUID)
 
 	return e
 }

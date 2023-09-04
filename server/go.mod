@@ -10,6 +10,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5 // direct
 	github.com/joho/godotenv v1.5.1 // direct
 	github.com/labstack/echo/v4 v4.11.1 // direct
+	github.com/google/uuid v1.3.1 // direct
 )
 
 require (
@@ -30,7 +31,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.21.5 // indirect
 	github.com/aws/smithy-go v1.14.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/google/uuid v1.3.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect

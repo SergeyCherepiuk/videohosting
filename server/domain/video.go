@@ -17,5 +17,6 @@ type Video struct {
 }
 
 type VideoService interface {
+	GetByUUID(uuid uuid.UUID) (Video, error)
 	Upload(video Video) error
 }
