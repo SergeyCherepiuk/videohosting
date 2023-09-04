@@ -25,6 +25,13 @@ export default {
       outlineWidth: {
         "3": "3px",
       },
+      flex: {
+        "2": "2 2 0%",
+        "3": "3 3 0%",
+      },
+      minHeight: {
+        "192": "192px",
+      },
     },
   },
   plugins: [],

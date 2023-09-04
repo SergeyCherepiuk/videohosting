@@ -1,36 +1,40 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { TFState, TFEvent, useTextFieldMachine } from '../../state/textfield';
 
     export let name: string;
     export let text: string;
     export let limit: number | null = null;
     export let singleLine: boolean = true;
+    export let minHeightPx: number = 0;
 
     let { state, send } = useTextFieldMachine(TFState.Unfocused);
     function onFocus() { send(TFEvent.Focus) }
     function onBlur() { send(TFEvent.Unfocus) }
 
-    onMount(() => {
-        let input = document.getElementById("input") as HTMLTextAreaElement;
-        input.oninput = () => {
-            if (singleLine) {
-                input.value = input.value.replaceAll("\n", "");
-            }
-            text = input.value;
+    function sanitize(e: Event) {
+        let el = (e.target as HTMLTextAreaElement)
+        if (singleLine) {
+            el.value = el.value.replaceAll("\n", "");
+        }
+        text = el.value;
+    }
 
-            if (limit && text.length > limit) {
-                send(TFEvent.ExceedLimit);
-            } else if (limit) {
-                send(TFEvent.BackToLimit);
-            }
+    function checkLimit(e: Event) {
+        let value = (e.target as HTMLTextAreaElement).value
+        if (limit && value.length > limit) {
+            send(TFEvent.ExceedLimit);
+        } else if (limit) {
+            send(TFEvent.BackToLimit);
+        }
+    }
 
-            input.style.height = "0px";
-            input.style.height = (input.scrollHeight) + "px";
-        };
-    });
+    function autoScale(e: Event) {
+        let el = (e.target as HTMLTextAreaElement)
+        el.style.height = "0px";
+        el.style.height = Math.max(el.scrollHeight, minHeightPx) + "px";
+    }
 
-    let preloadColors = [
+    [
         "border-gray-70", "border-blue-50", "border-red-50",
         "outline-transparent", "outline-blue-90", "outline-red-90",
         "text-red-50", "text-gray-70",
@@ -50,14 +54,16 @@
         : "outline-transparent hover:outline-3 hover:outline-blue-90"
     }">
     
-    <div id="scroll" class="flex flex-1 overflow-auto max-h-80 direction-rtl">
+    <div class="flex flex-1 h-full overflow-auto max-h-80 direction-rtl">
         <textarea
-            id="input" {name} rows="1"
+            {name}
+            rows="1"
             class="
                 resize-none outline-none
-                flex-grow p-3
-                font-amazon-ember text-lg break-words
+                flex-grow p-3 min-h-{minHeightPx}
+                font-amazon-ember text-lg break-words 
                 rounded-xl direction-ltr"
+            on:input={e => { sanitize(e); checkLimit(e); autoScale(e) }}
             on:focus={onFocus} on:blur={onBlur} /> 
     </div>
 
