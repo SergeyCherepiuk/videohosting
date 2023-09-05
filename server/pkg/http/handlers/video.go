@@ -96,7 +96,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	// Sending back Server-Sent Events with progress
+	// Creating the reader that will send events (SSE) with progress to the client
 	eventId := 0
 	reader := reader.NewReaderWithProgress(videoFile, func(bytesRead int) {
 		event := sse.Event{
