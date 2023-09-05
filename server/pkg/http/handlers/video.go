@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/SergeyCherepiuk/videohosting/domain"
-	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
 	"github.com/SergeyCherepiuk/videohosting/pkg/http/validation"
 	"github.com/SergeyCherepiuk/videohosting/pkg/internal/reader"
 	"github.com/SergeyCherepiuk/videohosting/pkg/internal/sse"
@@ -18,12 +17,12 @@ import (
 
 type VideoHandler struct {
 	videoService domain.VideoService
-	bucket       bucket.BucketService
+	bucket       domain.BucketService
 }
 
 func NewVideoHandler(
 	videoService domain.VideoService,
-	bucket bucket.BucketService,
+	bucket domain.BucketService,
 ) *VideoHandler {
 	return &VideoHandler{
 		videoService: videoService,

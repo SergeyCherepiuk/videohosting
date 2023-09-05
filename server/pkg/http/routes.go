@@ -2,7 +2,6 @@ package http
 
 import (
 	"github.com/SergeyCherepiuk/videohosting/domain"
-	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
 	"github.com/SergeyCherepiuk/videohosting/pkg/http/handlers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -10,7 +9,7 @@ import (
 
 type Router struct {
 	VideoService domain.VideoService
-	Bucket bucket.BucketService
+	Bucket       domain.BucketService
 }
 
 func (router Router) Build() *echo.Echo {

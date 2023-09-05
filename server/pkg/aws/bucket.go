@@ -1,4 +1,4 @@
-package bucket
+package aws
 
 import (
 	"context"
@@ -11,16 +11,16 @@ import (
 
 var partSize = int64(10 * 1024 * 1024)
 
-type S3BucketService struct {
+type BucketService struct {
 	client     *s3.Client
 	bucketName string
 }
 
-func NewS3BucketService(client *s3.Client, bucket string) *S3BucketService {
-	return &S3BucketService{client: client, bucketName: bucket}
+func NewBucketService(client *s3.Client, bucket string) *BucketService {
+	return &BucketService{client: client, bucketName: bucket}
 }
 
-func (service S3BucketService) Get(ctx context.Context, key string) ([]byte, string, error) {
+func (service BucketService) Get(ctx context.Context, key string) ([]byte, string, error) {
 	input := s3.GetObjectInput{
 		Bucket: aws.String(service.bucketName),
 		Key:    aws.String(key),
@@ -42,7 +42,7 @@ func (service S3BucketService) Get(ctx context.Context, key string) ([]byte, str
 	return buffer.Bytes(), *output.ContentType, nil
 }
 
-func (service S3BucketService) Upload(ctx context.Context, key, contentType string, file io.Reader) error {
+func (service BucketService) Upload(ctx context.Context, key, contentType string, file io.Reader) error {
 	manager := manager.NewUploader(service.client, func(u *manager.Uploader) {
 		u.PartSize = partSize
 	})

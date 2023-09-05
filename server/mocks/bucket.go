@@ -1,4 +1,4 @@
-package bucket
+package mocks
 
 import (
 	"context"
@@ -12,12 +12,14 @@ func NewMockBucketService() *MockBucketService {
 	return &MockBucketService{}
 }
 
+var partSize = int64(10 * 1024 * 1024)
+
 func (service MockBucketService) Get(ctx context.Context, key string) ([]byte, string, error) {
-	return make([]byte, 32*1024*1024), "text/plain", nil
+	return make([]byte, 5*partSize), "text/plain", nil
 }
 
 func (service MockBucketService) Upload(ctx context.Context, key, contentType string, file io.Reader) error {
-	buffer := make([]byte, 10*1024*1024)
+	buffer := make([]byte, partSize)
 	for {
 		time.Sleep(100 * time.Millisecond)
 		_, err := file.Read(buffer)

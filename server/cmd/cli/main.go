@@ -5,8 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
+	"github.com/SergeyCherepiuk/videohosting/mocks"
 	"github.com/SergeyCherepiuk/videohosting/pkg/database/postgres"
+	"github.com/SergeyCherepiuk/videohosting/pkg/database/redis"
 	"github.com/SergeyCherepiuk/videohosting/pkg/http"
 	"github.com/joho/godotenv"
 )
@@ -14,21 +15,25 @@ import (
 func init() {
 	loadEnv()
 	postgres.MustConnect()
+	redis.MustConnect()
 }
 
 func main() {
 	videoService := postgres.NewVideoService()
 
-	// Amazon S3
+	// Amazon S3 Bucket
 	// config, err := config.LoadDefaultConfig(context.Background())
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
 	// client := s3.NewFromConfig(config)
-	// s3BucketService := bucket.NewS3BucketService(client, os.Getenv("S3_BUCKET_NAME"))
+	// s3BucketService := aws.NewBucketService(client, os.Getenv("S3_BUCKET_NAME"))
+
+	// Redis Bucket
+	// redisBucketService := redis.NewBucketService(s3BucketService)
 
 	// Mocks
-	mockBucketService := bucket.NewMockBucketService()
+	mockBucketService := mocks.NewMockBucketService()
 
 	e := http.Router{
 		VideoService: videoService,

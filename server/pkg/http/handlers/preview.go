@@ -6,16 +6,16 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/SergeyCherepiuk/videohosting/pkg/bucket"
+	"github.com/SergeyCherepiuk/videohosting/domain"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
 type PreviewHandler struct {
-	bucket bucket.BucketService
+	bucket domain.BucketService
 }
 
-func NewPreviewHandler(bucket bucket.BucketService) *PreviewHandler {
+func NewPreviewHandler(bucket domain.BucketService) *PreviewHandler {
 	return &PreviewHandler{bucket: bucket}
 }
 
