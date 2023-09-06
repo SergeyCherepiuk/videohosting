@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/SergeyCherepiuk/videohosting/domain"
+	"github.com/SergeyCherepiuk/videohosting/pkg/internal/regex"
+	"github.com/SergeyCherepiuk/videohosting/pkg/settings"
 )
 
 type BucketService struct {
@@ -24,7 +26,7 @@ type bytesWithContentType struct {
 
 func (service BucketService) Get(ctx context.Context, key string) ([]byte, string, error) {
 	jsonValue := db.Get(ctx, key)
-	if jsonValue.Err() != nil {
+	if err := jsonValue.Err(); err != nil {
 		bytes, contentType, err := service.otherBucket.Get(ctx, key)
 		service.cache(ctx, key, bytes, contentType, 7*24*time.Hour)
 		return bytes, contentType, err
@@ -54,6 +56,10 @@ func (service BucketService) Upload(ctx context.Context, key, contentType string
 func (service BucketService) cache(
 	ctx context.Context, key string, bytes []byte, contentType string, ttl time.Duration,
 ) {
+	if !regex.MatchesAny(contentType, settings.BucketCacheContentTypes) {
+		return
+	}
+
 	if value, err := json.Marshal(bytesWithContentType{
 		Bytes:       bytes,
 		ContentType: contentType,

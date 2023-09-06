@@ -29,15 +29,15 @@ func main() {
 	// client := s3.NewFromConfig(config)
 	// s3BucketService := aws.NewBucketService(client, os.Getenv("S3_BUCKET_NAME"))
 
-	// Redis Bucket
-	// redisBucketService := redis.NewBucketService(s3BucketService)
-
 	// Mocks
 	mockBucketService := mocks.NewMockBucketService()
 
+	// Redis Bucket
+	redisBucketService := redis.NewBucketService(mockBucketService)
+
 	e := http.Router{
 		VideoService: videoService,
-		Bucket:       mockBucketService,
+		Bucket:       redisBucketService,
 	}.Build()
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }
