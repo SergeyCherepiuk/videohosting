@@ -114,7 +114,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 
 	// Uploading preview to the bucket
 	previewFilePath := fmt.Sprintf("%s/%s", os.Getenv("S3_PREVIEW_FOLDER"), video.PreviewID.String())
-	if err := handler.bucket.Upload(
+	if err := handler.bucket.Put(
 		context.Background(), previewFilePath, previewFileHeader.Header.Get("Content-Type"), previewFile,
 	); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -122,7 +122,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 
 	// Uploading video to the bucket
 	videoFilePath := fmt.Sprintf("%s/%s", os.Getenv("S3_VIDEO_FOLDER"), video.ID.String())
-	if err := handler.bucket.Upload(
+	if err := handler.bucket.Put(
 		context.Background(), videoFilePath, videoFileHeader.Header.Get("Content-Type"), reader,
 	); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)

@@ -42,7 +42,7 @@ func (service BucketService) Get(ctx context.Context, key string) ([]byte, strin
 	return buffer.Bytes(), *output.ContentType, nil
 }
 
-func (service BucketService) Upload(ctx context.Context, key, contentType string, file io.Reader) error {
+func (service BucketService) Put(ctx context.Context, key, contentType string, file io.Reader) error {
 	manager := manager.NewUploader(service.client, func(u *manager.Uploader) {
 		u.PartSize = partSize
 	})

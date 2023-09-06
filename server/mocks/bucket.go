@@ -18,7 +18,7 @@ func (service MockBucketService) Get(ctx context.Context, key string) ([]byte, s
 	return make([]byte, 5*partSize), "text/plain", nil
 }
 
-func (service MockBucketService) Upload(ctx context.Context, key, contentType string, file io.Reader) error {
+func (service MockBucketService) Put(ctx context.Context, key, contentType string, file io.Reader) error {
 	buffer := make([]byte, partSize)
 	for {
 		time.Sleep(100 * time.Millisecond)

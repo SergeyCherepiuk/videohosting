@@ -42,7 +42,7 @@ func (service BucketService) Get(ctx context.Context, key string) ([]byte, strin
 	return value.Bytes, value.ContentType, nil
 }
 
-func (service BucketService) Upload(ctx context.Context, key, contentType string, file io.Reader) error {
+func (service BucketService) Put(ctx context.Context, key, contentType string, file io.Reader) error {
 	bytes, err := io.ReadAll(file)
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (service BucketService) Upload(ctx context.Context, key, contentType string
 
 	service.cache(ctx, key, bytes, contentType, 7*24*time.Hour)
 
-	return service.otherBucket.Upload(ctx, key, contentType, file)
+	return service.otherBucket.Put(ctx, key, contentType, file)
 }
 
 func (service BucketService) cache(
