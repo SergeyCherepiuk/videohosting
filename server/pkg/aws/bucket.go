@@ -34,7 +34,7 @@ func (service BucketService) Get(ctx context.Context, key string) ([]byte, strin
 	downloader := manager.NewDownloader(service.client, func(d *manager.Downloader) {
 		d.PartSize = partSize
 	})
-	buffer := manager.NewWriteAtBuffer(make([]byte, partSize))
+	buffer := manager.NewWriteAtBuffer([]byte{})
 	if _, err := downloader.Download(ctx, buffer, &input); err != nil {
 		return nil, "", err
 	}
