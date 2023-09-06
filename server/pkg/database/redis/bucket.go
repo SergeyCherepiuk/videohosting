@@ -1,15 +1,18 @@
 package redis
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"time"
 
 	"github.com/SergeyCherepiuk/videohosting/domain"
-	"github.com/SergeyCherepiuk/videohosting/pkg/internal/regex"
-	"github.com/SergeyCherepiuk/videohosting/pkg/settings"
 )
+
+type ctxTtlKey string
+
+var CtxTtlKey = ctxTtlKey("ttl")
 
 type BucketService struct {
 	otherBucket domain.BucketService
@@ -27,39 +30,39 @@ type bytesWithContentType struct {
 func (service BucketService) Get(ctx context.Context, key string) ([]byte, string, error) {
 	jsonValue := db.Get(ctx, key)
 	if err := jsonValue.Err(); err != nil {
-		bytes, contentType, err := service.otherBucket.Get(ctx, key)
-		service.cache(ctx, key, bytes, contentType, 7*24*time.Hour)
-		return bytes, contentType, err
+		return service.getFromOtherBucketAndCache(ctx, key)
 	}
 
 	value := bytesWithContentType{}
 	if err := json.Unmarshal([]byte(jsonValue.Val()), &value); err != nil {
-		bytes, contentType, err := service.otherBucket.Get(ctx, key)
-		service.cache(ctx, key, bytes, contentType, 7*24*time.Hour)
-		return bytes, contentType, err
+		return service.getFromOtherBucketAndCache(ctx, key)
 	}
 
 	return value.Bytes, value.ContentType, nil
 }
 
 func (service BucketService) Put(ctx context.Context, key, contentType string, file io.Reader) error {
-	bytes, err := io.ReadAll(file)
-	if err != nil {
-		return err
+	if ttl, ok := ctx.Value(CtxTtlKey).(time.Duration); ok {
+		reader := io.TeeReader(file, &bytes.Buffer{})
+		if bytes, err := io.ReadAll(reader); err == nil {
+			service.cache(ctx, key, bytes, contentType, ttl)
+		}
 	}
 
-	service.cache(ctx, key, bytes, contentType, 7*24*time.Hour)
-
 	return service.otherBucket.Put(ctx, key, contentType, file)
+}
+
+func (service BucketService) getFromOtherBucketAndCache(ctx context.Context, key string) ([]byte, string, error) {
+	bytes, contentType, err := service.otherBucket.Get(ctx, key)
+	if ttl, ok := ctx.Value(CtxTtlKey).(time.Duration); ok {
+		service.cache(ctx, key, bytes, contentType, ttl)
+	}
+	return bytes, contentType, err
 }
 
 func (service BucketService) cache(
 	ctx context.Context, key string, bytes []byte, contentType string, ttl time.Duration,
 ) {
-	if !regex.MatchesAny(contentType, settings.BucketCacheContentTypes) {
-		return
-	}
-
 	if value, err := json.Marshal(bytesWithContentType{
 		Bytes:       bytes,
 		ContentType: contentType,

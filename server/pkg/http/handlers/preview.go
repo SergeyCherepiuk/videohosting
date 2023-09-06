@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/SergeyCherepiuk/videohosting/domain"
+	"github.com/SergeyCherepiuk/videohosting/pkg/database/redis"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -25,9 +27,9 @@ func (handler PreviewHandler) GetByUUID(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
+	ctxWithTtl := context.WithValue(context.Background(), redis.CtxTtlKey, 24 * time.Hour)
 	preview, mime, err := handler.bucket.Get(
-		context.Background(),
-		fmt.Sprintf("%s/%s", os.Getenv("S3_PREVIEW_FOLDER"), uuid.String()),
+		ctxWithTtl, fmt.Sprintf("%s/%s", os.Getenv("S3_PREVIEW_FOLDER"), uuid.String()),
 	)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
