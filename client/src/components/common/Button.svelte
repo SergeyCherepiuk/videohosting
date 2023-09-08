@@ -5,10 +5,8 @@
     export let onClick: MouseEventHandler<HTMLButtonElement>
 </script>
 
-<button
-    class="
-        text-lg text-white font-amazon-ember
-        rounded-lg px-4 py-2 bg-blue-50 w-min"
+<button class="text-lg text-white font-amazon-ember
+    rounded-lg px-4 py-2 bg-blue-50 w-min"
     on:click={onClick}>
-    {text}
+    <p class="truncate">{text}</p>
 </button>
