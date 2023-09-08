@@ -3,15 +3,25 @@
     import DetailsWindow from "./DetailsWindow.svelte";
     import ProgressWindow from "./ProgressWindow.svelte";
 
-    export let video: FileList
-    export let clearVideo: Function
+    export let video: Blob
+    export let fileName: string
+    export let fileSize: string
     export let onClose: Function
 
     let title: string = ""
     let description: string = ""
-    let preview: FileList
-    let clearPreview: Function 
+    let preview: Blob
     let progress: number = 0
+
+    // TODO: Complete preview generation from video blob
+    let reader = new FileReader();
+    reader.readAsDataURL(video);
+    reader.onload = e => {
+        if (e.target) {
+            preview = new Blob([e.target.result as ArrayBuffer])
+            console.log(preview)
+        }
+    }    
 
     enum Stage { Details, Progress }
     let stage: Stage = Stage.Details
@@ -22,8 +32,8 @@
             new Map<string, string | Blob>([
                 ["title", title],
                 ["description", description],
-                ["video", video.item(0) as Blob],
-                ["preview", preview.item(0) as Blob]
+                ["video", video],
+                ["preview", preview]
             ]),
             "http://localhost:3000/videos/upload",
             p => { progress = p }
@@ -33,21 +43,16 @@
     function close() {
         title = ""
         description = ""
-        progress = 0 
-        clearPreview()
-        clearVideo()
+        progress = 0
         onClose()
     }
 </script>
 
 {#if stage == Stage.Details}
     <DetailsWindow bind:title={title} bind:description={description}
-        bind:preview={preview} bind:clearPreview={clearPreview}
-        onUpload={upload} onClose={close} />
+        bind:preview={preview} onUpload={upload} onClose={close} />
 {/if}
 
 {#if stage == Stage.Progress}
-    <ProgressWindow fileName={video.item(0)?.name ?? "unknown filename"} 
-        fileSize={(video.item(0)?.size ?? 0).toString()} 
-        {progress} onClose={close} />
+    <ProgressWindow {fileName} {fileSize} {progress} onClose={close} />
 {/if}

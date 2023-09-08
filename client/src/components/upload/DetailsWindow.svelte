@@ -8,8 +8,7 @@
 
     export let title: string
     export let description: string
-    export let preview: FileList
-    export let clearPreview: Function
+    export let preview: Blob
     export let onUpload: MouseEventHandler<HTMLButtonElement>
     export let onClose: MouseEventHandler<HTMLButtonElement>
 </script>
@@ -26,8 +25,7 @@
             </div>
             <div class="flex-2">
                 <Label label="Preview">
-                    <PreviewPicker src="images/preview_placeholder.svg" alt="Preview placeholder"
-                        bind:preview={preview} bind:clearPreview={clearPreview} />
+                    <PreviewPicker bind:preview={preview} alt="Preview placeholder" />
                 </Label>
             </div>
         </div>
