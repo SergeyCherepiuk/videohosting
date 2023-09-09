@@ -9,6 +9,7 @@
     export let title: string
     export let description: string
     export let preview: Blob
+    export let video: Blob
     export let onUpload: MouseEventHandler<HTMLButtonElement>
     export let onClose: MouseEventHandler<HTMLButtonElement>
 </script>
@@ -25,7 +26,7 @@
             </div>
             <div class="flex-2">
                 <Label label="Preview">
-                    <PreviewPicker bind:preview={preview} alt="Preview placeholder" />
+                    <PreviewPicker bind:preview={preview} {video} alt="Preview placeholder" />
                 </Label>
             </div>
         </div>

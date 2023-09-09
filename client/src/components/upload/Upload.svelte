@@ -13,16 +13,6 @@
     let preview: Blob
     let progress: number = 0
 
-    // TODO: Complete preview generation from video blob
-    let reader = new FileReader();
-    reader.readAsDataURL(video);
-    reader.onload = e => {
-        if (e.target) {
-            preview = new Blob([e.target.result as ArrayBuffer])
-            console.log(preview)
-        }
-    }    
-
     enum Stage { Details, Progress }
     let stage: Stage = Stage.Details
 
@@ -49,7 +39,7 @@
 </script>
 
 {#if stage == Stage.Details}
-    <DetailsWindow bind:title={title} bind:description={description}
+    <DetailsWindow bind:title={title} {video} bind:description={description}
         bind:preview={preview} onUpload={upload} onClose={close} />
 {/if}
 

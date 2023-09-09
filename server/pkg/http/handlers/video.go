@@ -82,7 +82,7 @@ func (handler VideoHandler) Upload(c echo.Context) error {
 
 	video := domain.Video{
 		ID:          uuid.New(),
-		AuthorID:    uuid.MustParse("657e846b-073b-454a-999b-2ce6157452cc"), // hardcoded for now (no auth)
+		AuthorID:    uuid.MustParse("32d7786f-dfab-4a0d-9eb0-1d35021e7c7f"), // hardcoded for now (no auth)
 		Title:       request.Title,
 		Description: request.Description,
 		PreviewID:   uuid.New(),
