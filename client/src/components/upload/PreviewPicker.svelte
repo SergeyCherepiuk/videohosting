@@ -12,7 +12,7 @@
         let canvas = document.getElementById("canvas") as HTMLCanvasElement
         let player = document.getElementById("player") as HTMLVideoElement
         canvas.getContext("2d")?.drawImage(player, 0, 0, player.videoWidth, player.videoHeight)
-        canvas.toBlob(blob => { if (blob) preview = blob }) // ISSUE: Returns empty blob
+        canvas.toBlob(blob => { if (blob) preview = blob }) // TODO: Returns empty blob
     })
 
     let previewFile: FileList
