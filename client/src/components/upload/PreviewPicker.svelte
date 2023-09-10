@@ -23,25 +23,29 @@
     }
 </script>
 
-{#if preview}
-    <button on:click={clearPreview}><span class="text-4xl">&times;</span></button>
-{/if}
-
-<label for="preview" class="flex aspect-video rounded-xl overflow-clip bg-black justify-center items-center">
+<div class="relative">
     {#if preview}
-        <img id="image" src={URL.createObjectURL(preview)} {alt}
-            class="w-full aspect-video rounded-xl bg-black object-contain" /> 
-    {:else}
-        <div class="flex flex-col items-center gap-4">
-            <Button text="Generate preview" isPrimary={false} onClick={generatePreview} />
-            <p class="text-white text-lg">Or click outside to <u>choose</u></p>
+        <div class="absolute bottom-2 right-2">
+            <Button text="Clear" isPrimary={false} onClick={clearPreview} />
         </div>
-    {/if} 
+    {/if}
 
-    <video id="player" src={URL.createObjectURL(video)} class="w-0">
-        <track kind="captions" />
-    </video>
-    <canvas id="canvas" class="hidden" />
-</label>
-<input id="preview" type="file" class="hidden" 
-    bind:files={previewFile}  on:change={onSelect} />
+    <label for="preview" class="flex aspect-video rounded-xl overflow-clip bg-black justify-center items-center">
+        {#if preview}
+            <img id="image" src={URL.createObjectURL(preview)} {alt}
+                class="w-full aspect-video rounded-xl bg-black object-contain" /> 
+        {:else}
+            <div class="flex flex-col items-center gap-4">
+                <Button text="Generate preview" isPrimary={false} onClick={generatePreview} />
+                <p class="text-white text-lg">Or click outside to <u>choose</u></p>
+            </div>
+        {/if} 
+
+        <video id="player" src={URL.createObjectURL(video)} class="w-0">
+            <track kind="captions" />
+        </video>
+        <canvas id="canvas" class="hidden" />
+    </label>
+    <input id="preview" type="file" class="hidden" 
+        bind:files={previewFile}  on:change={onSelect} />
+</div>
