@@ -38,6 +38,6 @@
         </div>
     </div>
     <div class="flex w-full justify-end">
-        <Button text="Upload" onClick={onUpload} />
+        <Button text="Upload" isPrimary={true} onClick={onUpload} />
     </div>
 </div>

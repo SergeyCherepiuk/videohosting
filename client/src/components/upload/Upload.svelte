@@ -26,7 +26,7 @@
                 ["preview", preview]
             ]),
             "http://localhost:3000/videos/upload",
-            p => { progress = p }
+            p => progress = p
         )
     }
 
