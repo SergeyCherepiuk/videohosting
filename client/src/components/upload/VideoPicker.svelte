@@ -5,17 +5,20 @@
     export let text: string
     
     let videoFile: FileList
-    function onSelect() {
+    function onChange() {
         video = videoFile.item(0) as Blob
-        fileName = videoFile.item(0)?.name ?? "unknown name"
-        fileSize = videoFile.item(0)?.size?.toString() ?? "unknown size"
+        if (isContentTypeValid(video)) {
+            fileName = video.name ?? "unknown name"
+            fileSize = video.size?.toString() ?? "unknown size"
+        }
+    }
+
+    function isContentTypeValid(file: Blob): boolean {
+        return file.type.startsWith("video/")
     }
 </script>
 
-<label for="video"
-    class="text-lg text-white font-amazon-ember
-        rounded-lg px-4 py-2 bg-blue-50 w-min">
-    <p class="truncate">{text}</p>
+<label for="video" class="text-lg text-white font-amazon-ember rounded-lg px-4 py-2 bg-blue-50 w-min">
+    <p class="truncate select-none">{text}</p>
 </label>
-<input id="video" type="file" class="hidden"
-    bind:files={videoFile} on:change={onSelect} />
+<input id="video" type="file" accept="video/*" class="hidden" bind:files={videoFile} on:change={onChange} />
